@@ -6,10 +6,11 @@ import java.util.List;
 import com.sistemaestagio.bean.Aluno;
 
 public class AlunoDao {
+
     public static Connection getConnection() {
         Connection con = null;
         try {
-            Class.forName("com.mysql.jdbc.Driver");
+            Class.forName("com.mysql.jdbc.Driver"); // ou com.mysql.cj.jdbc.Driver se for versão mais nova
             con = DriverManager.getConnection("jdbc:mysql://localhost:3306/sistemaestagio", "root", "");
         } catch (Exception e) {
             System.out.println(e);
@@ -61,5 +62,34 @@ public class AlunoDao {
         return count;
     }
 
-    // Métodos adicionais (CRUD) podem ser incluídos conforme necessário
+    public static int salvarAluno(Aluno aluno) {
+        int status = 0;
+        try {
+            Connection conn = getConnection();
+            PreparedStatement ps = conn.prepareStatement(
+                "INSERT INTO dadosalunos (nome, matricula, email_academico, telefone, data_nascimento, endereco, cidade, estado, cep, cpf) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+            );
+
+            ps.setString(1, aluno.getNome());
+            ps.setString(2, aluno.getMatricula());
+            ps.setString(3, aluno.getEmailAcademico());
+            ps.setString(4, aluno.getTelefone());
+            ps.setDate(5, aluno.getDataNascimento() != null && !aluno.getDataNascimento().isEmpty()
+                            ? java.sql.Date.valueOf(aluno.getDataNascimento())
+                            : null);
+            ps.setString(6, aluno.getEndereco());
+            ps.setString(7, aluno.getCidade());
+            ps.setString(8, aluno.getEstado());
+            ps.setString(9, aluno.getCep());
+            ps.setString(10, aluno.getCpf());
+
+            status = ps.executeUpdate();
+
+            ps.close();
+            conn.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return status;
+    }
 }
