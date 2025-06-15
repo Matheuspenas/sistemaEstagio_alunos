@@ -13,7 +13,6 @@ public class Aluno {
     private String cep;
     private String cpf;
 
-    // Getters e Setters
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
 
